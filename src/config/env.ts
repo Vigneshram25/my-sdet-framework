@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 // Load .env from the project root into process.env
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../.env'), quiet: true });
 
 function required(name: string): string {
   const value = process.env[name];
