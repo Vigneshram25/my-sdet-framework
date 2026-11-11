@@ -165,7 +165,7 @@ test('try / catch / finally and custom errors', async () => {
     } catch (err) {
         if (err instanceof APIError) steps.push(`caught ${err.status}`);
     } finally {
-        steps.push('cleanup');
+        steps.push('cleanup');                                  //always runs
     }
     expect(steps).toEqual(['caught 500', 'cleanup']);
 
@@ -174,8 +174,8 @@ test('try / catch / finally and custom errors', async () => {
     let calls = 0;
     const value = await retry (async () => {
         calls++;
-        if (calls < 3) throw new Error('not yet');
-        return 'done';
+        if (calls < 3) throw new Error('not yet');              //fails twice
+        return 'done';                                          //succeeds on 3rd try
     }, 3, 10);
     expect(value).toBe('done');
     console.log('steps:', steps, '| retry calls:', calls, '| value:', value);
