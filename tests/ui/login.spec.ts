@@ -1,21 +1,19 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '@pages/LoginPage';
+import { test, expect } from '@fixtures';
 import { env } from '@config/env';
 import { log } from 'node:console';
+
 
 //login test must start logged out, so use an empty browser state
 
 test.use({storageState: {cookies: [], origins: [] } });
 
 test.describe('Login', () => {
-    let loginPage: LoginPage;
-
-    test.beforeEach(async ({ page }) => {
-        loginPage = new LoginPage(page);
+    test.beforeEach(async ({ loginPage }) => {
         await loginPage.open();
     });
+    
 
-    test('valid user can log in @smoke', async ({ page }) => {
+    test('valid user can log in @smoke', async ({ page, loginPage }) => {
         await loginPage.login(env.sauceUser, env.saucePassword);
         await loginPage.expectUrlContains('inventory.html');
         await expect(page.getByTestId('title')).toHaveText('Products');
@@ -29,7 +27,7 @@ test.describe('Login', () => {
     ];
 
     for (const tc of negativeCases) {
-        test (`login fails: ${tc.name} @regression`, async () => {
+        test (`login fails: ${tc.name} @regression`, async ({ loginPage}) => {
             await loginPage.login(tc.user, tc.pass);
             await loginPage.expectError(tc.error);
         });

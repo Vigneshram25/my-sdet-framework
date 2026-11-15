@@ -1,7 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 
-test('Sauce Demo home page opens', async ({ page }) => {
-    await page.goto('/');
+test.use({ storageState: {cookies: [], origins: [] } });
+
+test('Sauce Demo home page opens', async ({ page, loginPage }) => {
+    await loginPage.open();
     await expect(page).toHaveTitle('Swag Labs');
     await expect(page.getByPlaceholder('Username')).toBeVisible();
 });
