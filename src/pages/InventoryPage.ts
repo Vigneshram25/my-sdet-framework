@@ -12,6 +12,8 @@ export class InventoryPage extends BasePage {
     readonly sortDropdown: Locator;
     readonly cartbadge: Locator;
     readonly cartLink: Locator;
+    readonly menuButton: Locator;
+    readonly logoutLink: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -22,6 +24,13 @@ export class InventoryPage extends BasePage {
         this.sortDropdown = page.getByTestId('product-sort-container');
         this.cartbadge = page.getByTestId('shopping-cart-badge');               //the red number
         this.cartLink = page.getByTestId('shopping-cart-link');
+        this.menuButton = page.getByRole('button', { name: 'open menu' });
+        this.logoutLink = page.getByTestId('logout-sidebar-link');
+    }
+
+    //Open the products page directly (works because we are already logged in)
+    async open(path ='/inventory.html'): Promise<void> {
+        await super.open(path);
     }
 
     //Find the card that contains the product name, then click ITS button
@@ -52,6 +61,15 @@ export class InventoryPage extends BasePage {
     async expectCartCount(count: number): Promise<void> {
         if (count === 0) await expect(this.cartbadge).toBeHidden();     //badge disapperas at 0
         else await expect(this.cartbadge).toHaveText(String(count));
+    }
+
+    async openCart(): Promise<void> {
+        await this.cartLink.click();
+    }
+
+    async logout(): Promise<void> {
+        await this.menuButton.click();
+        await this.logoutLink.click();
     }
 
 }

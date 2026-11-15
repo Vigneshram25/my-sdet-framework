@@ -1,6 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 import { env } from './src/config/env';
 
+//session file written by tests/setup/auth.setup.ts (git-ignored: playwright/.auth/)
+const AUTH_FILE = 'playwright/.auth/user.json';
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
@@ -27,11 +30,15 @@ export default defineConfig({
   },
 
   projects: [
+    // 1) runs first: logs in once and saves the session
     { name: 'setup', testMatch: /.*\.setup\.ts/ },
+
     { name: 'learning', testDir: './tests/learning' },
-    { name: 'chromium', testDir: './tests/ui', dependencies: ['setup'], use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox', testDir: './tests/ui', grep: /@smoke/, dependencies: ['setup'], use: { ...devices['Desktop Firefox'] } },
-    { name: 'webkit', testDir: './tests/ui', grep: /@smoke/, dependencies: ['setup'], use: { ...devices['Desktop Safari'] } },
+
+    // 2) browser projects wait for 'setup', then start every test already logged in
+    { name: 'chromium', testDir: './tests/ui', dependencies: ['setup'], use: { ...devices['Desktop Chrome'], storageState: AUTH_FILE } },
+    { name: 'firefox', testDir: './tests/ui', grep: /@smoke/, dependencies: ['setup'], use: { ...devices['Desktop Firefox'], storageState: AUTH_FILE } },
+    { name: 'webkit', testDir: './tests/ui', grep: /@smoke/, dependencies: ['setup'], use: { ...devices['Desktop Safari'], storageState: AUTH_FILE } },
     { name: 'api', testDir: './tests/api', use: { baseURL: env.apiBaseUrl } },
     { name: 'db', testDir: './tests/db' },
   ],
