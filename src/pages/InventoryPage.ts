@@ -10,7 +10,7 @@ export class InventoryPage extends BasePage {
     readonly itemNames: Locator;
     readonly itemPrices: Locator;
     readonly sortDropdown: Locator;
-    readonly cartbadge: Locator;
+    readonly cartBadge: Locator;
     readonly cartLink: Locator;
     readonly menuButton: Locator;
     readonly logoutLink: Locator;
@@ -22,9 +22,9 @@ export class InventoryPage extends BasePage {
         this.itemNames = page.getByTestId('inventory-item-name');
         this.itemPrices = page.getByTestId('inventory-item-price');
         this.sortDropdown = page.getByTestId('product-sort-container');
-        this.cartbadge = page.getByTestId('shopping-cart-badge');               //the red number
+        this.cartBadge = page.getByTestId('shopping-cart-badge');               //the red number
         this.cartLink = page.getByTestId('shopping-cart-link');
-        this.menuButton = page.getByRole('button', { name: 'open menu' });
+        this.menuButton = page.getByRole('button', { name: 'Open Menu' });
         this.logoutLink = page.getByTestId('logout-sidebar-link');
     }
 
@@ -41,7 +41,7 @@ export class InventoryPage extends BasePage {
 
     async removeFromCart(productName: string): Promise<void> {
         await this.items.filter({ hasText: productName})
-        .getByRole('button', { name: 'Remove'}).click();
+        .getByRole('button', { name: 'Remove' }).click();
     }
 
     async sortBy(option: SortOption): Promise<void> {
@@ -58,9 +58,16 @@ export class InventoryPage extends BasePage {
         return texts.map((t) => Number(t.replace('$', '')));
     }
 
+    //price of ONE Product --> find its card, then the price inside it
+    async getPriceOf(productName: string): Promise<number> {
+        const text = await this.items.filter({ hasText: productName })
+            .getByTestId('inventory-item-price').textContent();
+        return Number((text ?? '').replace('$', ''));
+    }
+
     async expectCartCount(count: number): Promise<void> {
-        if (count === 0) await expect(this.cartbadge).toBeHidden();     //badge disapperas at 0
-        else await expect(this.cartbadge).toHaveText(String(count));
+        if (count === 0) await expect(this.cartBadge).toBeHidden();     //badge disapperas at 0
+        else await expect(this.cartBadge).toHaveText(String(count));
     }
 
     async openCart(): Promise<void> {
