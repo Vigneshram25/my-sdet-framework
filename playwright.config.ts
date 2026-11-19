@@ -39,7 +39,14 @@ export default defineConfig({
     { name: 'chromium', testDir: './tests/ui', dependencies: ['setup'], use: { ...devices['Desktop Chrome'], storageState: AUTH_FILE } },
     { name: 'firefox', testDir: './tests/ui', grep: /@smoke/, dependencies: ['setup'], use: { ...devices['Desktop Firefox'], storageState: AUTH_FILE } },
     { name: 'webkit', testDir: './tests/ui', grep: /@smoke/, dependencies: ['setup'], use: { ...devices['Desktop Safari'], storageState: AUTH_FILE } },
-    { name: 'api', testDir: './tests/api', use: { baseURL: env.apiBaseUrl } },
+    {
+      name: 'api',
+      testDir: './tests/api',
+      use: {
+        baseURL: env.apiBaseUrl,                              // request.get('/booking') = API base URL + /booking
+        extraHTTPHeaders: { Accept: 'application/json' },     // ask the server for JSON on every request
+      },
+    },
     { name: 'db', testDir: './tests/db' },
   ],
 });
