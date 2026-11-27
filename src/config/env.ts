@@ -4,6 +4,7 @@ import path from 'path';
 // Load .env from the project root into process.env
 dotenv.config({ path: path.resolve(__dirname, '../../.env'), quiet: true });
 
+// Fail FAST with a clear message if a required value is missing
 function required(name: string): string {
   const value = process.env[name];
   if (!value) throw new Error(`Missing ${name} in .env`);
@@ -17,6 +18,8 @@ export const env = {
   saucePassword: required('SAUCE_PASSWORD'),
   bookerUser: required('BOOKER_USER'),
   bookerPassword: required('BOOKER_PASSWORD'),
+  dummyUser: required('DUMMY_USER'),            // NEW (4.3): DummyJSON login for Bearer-token tests
+  dummyPassword: required('DUMMY_PASSWORD'),    // NEW (4.3)
   databaseUrl: process.env.DATABASE_URL || '',
 };
 
